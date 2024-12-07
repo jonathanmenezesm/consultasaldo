@@ -7,26 +7,22 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
             background-color: #f4f4f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            text-align: center;
+            padding: 20px;
         }
         .form-container {
             background-color: white;
             padding: 20px;
+            margin: auto;
+            max-width: 400px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            text-align: center;
         }
         input, button {
             width: 100%;
             padding: 10px;
-            margin: 5px 0;
+            margin: 10px 0;
             border-radius: 5px;
             border: 1px solid #ddd;
         }
@@ -38,15 +34,8 @@
         button:hover {
             background-color: #45a049;
         }
-        h2 {
-            color: #333;
-        }
         .result {
             margin-top: 20px;
-            padding: 10px;
-            background-color: #e8f4e8;
-            border: 1px solid #4CAF50;
-            color: #333;
         }
     </style>
 </head>
@@ -55,42 +44,43 @@
     <div class="form-container">
         <h2>Consulta de Saldo</h2>
         <form id="consultaForm">
-            <label for="telefone">Número de Telefone:</label><br>
-            <input type="text" id="telefone" name="telefone" required><br><br>
+            <label for="celular">Número de Celular:</label><br>
+            <input type="text" id="celular" placeholder="Exemplo: 11999999999" required><br>
             
             <label for="mes">Mês:</label><br>
-            <input type="text" id="mes" name="mes" required><br><br>
+            <input type="text" id="mes" placeholder="Exemplo: Janeiro" required><br>
             
             <button type="submit">Consultar</button>
         </form>
-        <div id="resultado" class="result" style="display:none;"></div>
+        <div id="resultado" class="result"></div>
     </div>
 
     <script>
         document.getElementById('consultaForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const telefone = document.getElementById('telefone').value;
+            // Obter os valores do formulário
+            const celular = document.getElementById('celular').value;
             const mes = document.getElementById('mes').value;
 
-            // Substitua 'SEU_SCRIPT_ID' com o ID do seu Apps Script
-            const url = `https://script.google.com/macros/s/19JrS76L0TcT0rSBat0IkZYCsowGI7hBNTi3vTGNHFDK5wdCznlsJVcK4/exec?telefone=${telefone}&mes=${mes}`;
-            
+            // Substitua SEU_SCRIPT_ID pela URL do Google Apps Script
+            const url = `https://script.google.com/macros/s/AKfycbwCOOxQT0wQc3haWfc7Y7x9ZmpQrS8WNdKT94QPRUadJpUIs8JMvKI3gM3pmrITlYyK/exec?celular=${celular}&mes=${mes}`;
+
+            // Realiza a consulta à API
             fetch(url)
-                .then(response => response.json())
+                .then(response => response.text())
                 .then(data => {
                     const resultadoDiv = document.getElementById('resultado');
-                    if (data.length > 0) {
-                        resultadoDiv.innerHTML = `<p><strong>Quantidade:</strong> ${data[0].quantidade}</p><p><strong>Valor:</strong> R$ ${data[0].valor}</p>`;
+                    if (data.startsWith("{") || data.startsWith("[")) {
+                        const jsonData = JSON.parse(data);
+                        resultadoDiv.innerHTML = `<p>Quantidade: ${jsonData[0].quantidade}</p><p>Valor: R$ ${jsonData[0].valor}</p>`;
                     } else {
-                        resultadoDiv.innerHTML = `<p><strong>Nenhum dado encontrado.</strong></p>`;
+                        resultadoDiv.textContent = data;
                     }
-                    resultadoDiv.style.display = 'block';
                 })
                 .catch(error => {
                     console.error('Erro:', error);
-                    document.getElementById('resultado').innerHTML = `<p>Erro ao consultar.</p>`;
-                    document.getElementById('resultado').style.display = 'block';
+                    document.getElementById('resultado').textContent = "Erro ao consultar.";
                 });
         });
     </script>
