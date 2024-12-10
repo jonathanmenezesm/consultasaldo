@@ -72,6 +72,11 @@
             text-decoration: none;
             font-weight: bold;
         }
+
+        #comprovante {
+            
+        }
+
     </style>
 </head>
 <body>
@@ -79,10 +84,10 @@
     <h1>Consulta de Vendas</h1>
     <div class="container">
         <label for="celular">Celular:</label>
-        <input type="text" id="celular" placeholder="Digite o número do celular (ex.: 21911223344" />
+        <input type="text" id="celular" placeholder="Digite seu Nº de celular(ex.:21911223344)" style="width: 90%;"/>
         
         <label for="mes">Mês:</label>
-        <input type="text" id="mes" placeholder="Digite o mês (ex: novembro)" />
+        <input type="text" id="mes" placeholder="Digite o mês (ex: novembro)" style="width: 90%;" />
         
         <button onclick="consultar()">Consultar</button>
 
@@ -93,7 +98,7 @@
     <div class="pix-banner">
         <p>Chave Pix: <strong>21983010380</strong></p>
         <p>Após efeturar o pagamento, peço que envie o comprovante para o mesmo número.
-            <a href="https://wa.me/+5521983010380" target="_blank">Clique aqui para enviar o comprovante.</a></p>
+            <a href="https://wa.me/+5521983010380" target="_blank" id="comprovante">Clique aqui para enviar o comprovante.</a></p>
     </div>
 
     <script>
