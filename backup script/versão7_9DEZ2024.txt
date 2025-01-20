@@ -1,0 +1,67 @@
+function doGet(e) {
+  try {
+    // Obter a planilha e verificar se existe
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Vendas");
+    if (!sheet) {
+      return ContentService.createTextOutput(
+        JSON.stringify({ erro: "Erro: Aba 'Vendas' não encontrada." })
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Obter os dados da planilha
+    const data = sheet.getDataRange().getValues();
+    if (!data || data.length < 2) {
+      return ContentService.createTextOutput(
+        JSON.stringify({ erro: "Erro: Nenhum dado encontrado na planilha." })
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Parâmetros recebidos
+    const celular = e.parameter.celular ? e.parameter.celular.trim() : null;
+    const mes = e.parameter.mes ? e.parameter.mes.toLowerCase().trim() : null;
+
+    if (!celular || !mes) {
+      return ContentService.createTextOutput(
+        JSON.stringify({ erro: "Parâmetros 'celular' e 'mes' são obrigatórios." })
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Inicializar acumuladores e variáveis
+    let totalQuantidade = 0;
+    let totalValor = 0;
+    let nomeCliente = "";
+
+    // Iterar pelos dados da planilha
+    for (let i = 1; i < data.length; i++) {
+      const linhaMes = data[i][1] ? data[i][1].toString().toLowerCase().trim() : "";
+      const linhaCelular = data[i][2] ? data[i][2].toString().trim() : "";
+      const linhaNome = data[i][3] ? data[i][3].toString().trim() : "";
+      const linhaQuantidade = parseFloat(data[i][4]) || 0;
+      const linhaValor = parseFloat(data[i][5].toString().replace("R$", "").replace(",", ".").trim()) || 0;
+
+      if (linhaCelular === celular && linhaMes === mes) {
+        totalQuantidade += linhaQuantidade;
+        totalValor += linhaValor;
+
+        // Guardar nome do cliente (assume que o nome é o mesmo para todas as ocorrências do celular)
+        nomeCliente = linhaNome;
+      }
+    }
+
+    // Se encontrar registros, retornar a mensagem personalizada
+    if (totalQuantidade > 0 || totalValor > 0) {
+      const mensagem = `Olá, ${nomeCliente}. No mês de ${mes}, você pegou ${totalQuantidade} salgados(s) e tem um valor aberto de R$ ${totalValor.toFixed(2).replace(".", ",")}.`;
+      return ContentService.createTextOutput(
+        JSON.stringify({ mensagem: mensagem })
+      ).setMimeType(ContentService.MimeType.JSON);
+    } else {
+      return ContentService.createTextOutput(
+        JSON.stringify({ erro: "Nenhum registro encontrado para o celular e mês fornecidos." })
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+  } catch (error) {
+    return ContentService.createTextOutput(
+      JSON.stringify({ erro: "Erro interno: " + error.message })
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
+}
