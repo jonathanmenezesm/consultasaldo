@@ -28,12 +28,11 @@ async function consultar() {
             document.getElementById('result').innerHTML = data.mensagem;
         } else if (data.erro) {
             document.getElementById('error').innerHTML = data.erro;
+            document.getElementById('result').innerHTML = ""; // Limpar o indicador de carregamento
         }
     } catch (error) {
         // Em caso de erro na requisição
         document.getElementById('error').innerHTML = "Erro ao consultar, tente novamente mais tarde.";
-    } finally {
-        // Remover indicador de carregamento
-        document.getElementById('result').innerHTML = "";
+        document.getElementById('result').innerHTML = ""; // Limpar o indicador de carregamento
     }
 }
