@@ -1,33 +1,39 @@
-        async function consultar() {
-            // Limpar resultados anteriores
-            document.getElementById('result').innerHTML = "";
-            document.getElementById('error').innerHTML = "";
+async function consultar() {
+    // Limpar resultados anteriores
+    document.getElementById('result').innerHTML = "";
+    document.getElementById('error').innerHTML = "";
 
-            const celular = document.getElementById('celular').value.trim();
-            const mes = document.getElementById('mes').value.trim().toLowerCase();
+    const celular = document.getElementById('celular').value.trim();
+    const mes = document.getElementById('mes').value.trim().toLowerCase();
 
-            // Validar entradas
-            if (!celular || !mes) {
-                document.getElementById('error').innerHTML = "Por favor, preencha todos os campos.";
-                return;
-            }
+    // Validar entradas
+    if (!celular || !mes) {
+        document.getElementById('error').innerHTML = "Por favor, preencha todos os campos.";
+        return;
+    }
 
-            // Construir URL de consulta
-            const url = `https://script.google.com/macros/s/AKfycbw3fkAdv_xKEhfVOCSjNkrmDRNCJ85WzSj0L-_c8LbcMppB67m6kBvvjNodvF3zwW0t/exec?celular=${celular}&mes=${mes}`;
+    // Exibir indicador de carregamento
+    document.getElementById('result').innerHTML = "Consultando...";
 
-            try {
-                // Fazer a consulta na API
-                const response = await fetch(url);
-                const data = await response.json();
+    // Construir URL de consulta
+    const url = `https://script.google.com/macros/s/AKfycbw3fkAdv_xKEhfVOCSjNkrmDRNCJ85WzSj0L-_c8LbcMppB67m6kBvvjNodvF3zwW0t/exec?celular=${celular}&mes=${mes}`;
 
-                // Verificar se a API retornou mensagem ou erro
-                if (data.mensagem) {
-                    document.getElementById('result').innerHTML = data.mensagem;
-                } else if (data.erro) {
-                    document.getElementById('error').innerHTML = data.erro;
-                }
-            } catch (error) {
-                // Em caso de erro na requisição
-                document.getElementById('error').innerHTML = "Erro ao consultar, tente novamente mais tarde.";
-            }
+    try {
+        // Fazer a consulta na API
+        const response = await fetch(url);
+        const data = await response.json();
+
+        // Verificar se a API retornou mensagem ou erro
+        if (data.mensagem) {
+            document.getElementById('result').innerHTML = data.mensagem;
+        } else if (data.erro) {
+            document.getElementById('error').innerHTML = data.erro;
         }
+    } catch (error) {
+        // Em caso de erro na requisição
+        document.getElementById('error').innerHTML = "Erro ao consultar, tente novamente mais tarde.";
+    } finally {
+        // Remover indicador de carregamento
+        document.getElementById('result').innerHTML = "";
+    }
+}
