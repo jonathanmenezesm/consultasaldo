@@ -1,4 +1,4 @@
-const API_URL = 'https://script.google.com/macros/s/AKfycbw3fkAdv_xKEhfVOCSjNkrmDRNCJ85WzSj0L-_c8LbcMppB67m6kBvvjNodvF3zwW0t/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwUOmeymHX-iqc4mdSswUeY1kRzlHDBQUsKMBqFMouTWgON96NEflMebjaJ-VGyBM4G/exec';
 
 async function consultar() {
     document.getElementById('result').innerHTML = "";
