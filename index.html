@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consulta de Vendas</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+        <link rel="stylesheet" href="style.css">
+        <script src="script.js" defer></script>
   </head>
 
 <body>
@@ -22,6 +22,45 @@
 
         <div id="result" class="result"></div>
         <div id="error" class="error"></div>
+    </div>
+
+    <h2 style="text-align:center;margin-top:24px;">Registrar Venda</h2>
+    <div class="container">
+        <label for="data_compra">Data da compra:</label>
+        <input type="date" id="data_compra" />
+
+        <label for="reg_celular">Celular:</label>
+        <input type="text" id="reg_celular" placeholder="21911223344" />
+
+        <label for="reg_nome">Nome:</label>
+        <input type="text" id="reg_nome" placeholder="Nome do cliente" />
+
+        <label for="produto">Produto:</label>
+        <input type="text" id="produto" placeholder="Ex: Coxinha" />
+
+        <label for="quantidade">Quantidade:</label>
+        <input type="number" id="quantidade" min="1" value="1" />
+
+        <label for="valor_unitario">Valor unitário (ex: 4.5):</label>
+        <input type="number" id="valor_unitario" step="0.01" min="0" />
+
+        <label for="status_pagamento">Status pagamento:</label>
+        <select id="status_pagamento">
+            <option value="pendente">pendente</option>
+            <option value="pago">pago</option>
+            <option value="parcial">parcial</option>
+        </select>
+
+        <label for="comprovante_url">URL do comprovante (opcional):</label>
+        <input type="text" id="comprovante_url" placeholder="https://..." />
+
+        <label for="observacao">Observação (opcional):</label>
+        <input type="text" id="observacao" />
+
+        <button onclick="registrarVenda()">Registrar Venda</button>
+
+        <div id="resultReg" class="result"></div>
+        <div id="errorReg" class="error"></div>
     </div>
 
     <div class="pix-banner">

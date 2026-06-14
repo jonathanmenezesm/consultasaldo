@@ -1,38 +1,88 @@
+const API_URL = 'https://script.google.com/macros/s/AKfycbw3fkAdv_xKEhfVOCSjNkrmDRNCJ85WzSj0L-_c8LbcMppB67m6kBvvjNodvF3zwW0t/exec';
+
 async function consultar() {
-    // Limpar resultados anteriores
     document.getElementById('result').innerHTML = "";
     document.getElementById('error').innerHTML = "";
 
     const celular = document.getElementById('celular').value.trim();
     const mes = document.getElementById('mes').value.trim().toLowerCase();
 
-    // Validar entradas
     if (!celular || !mes) {
         document.getElementById('error').innerHTML = "Por favor, preencha todos os campos.";
         return;
     }
 
-    // Exibir indicador de carregamento
     document.getElementById('result').innerHTML = "Consultando...";
 
-    // Construir URL de consulta
-    const url = `https://script.google.com/macros/s/AKfycbw3fkAdv_xKEhfVOCSjNkrmDRNCJ85WzSj0L-_c8LbcMppB67m6kBvvjNodvF3zwW0t/exec?celular=${celular}&mes=${mes}`;
+    const url = `${API_URL}?celular=${encodeURIComponent(celular)}&mes=${encodeURIComponent(mes)}`;
 
     try {
-        // Fazer a consulta na API
         const response = await fetch(url);
         const data = await response.json();
 
-        // Verificar se a API retornou mensagem ou erro
         if (data.mensagem) {
             document.getElementById('result').innerHTML = data.mensagem;
         } else if (data.erro) {
             document.getElementById('error').innerHTML = data.erro;
-            document.getElementById('result').innerHTML = ""; // Limpar o indicador de carregamento
+            document.getElementById('result').innerHTML = "";
         }
     } catch (error) {
-        // Em caso de erro na requisição
         document.getElementById('error').innerHTML = "Erro ao consultar, tente novamente mais tarde.";
-        document.getElementById('result').innerHTML = ""; // Limpar o indicador de carregamento
+        document.getElementById('result').innerHTML = "";
+    }
+}
+
+async function registrarVenda() {
+    document.getElementById('resultReg').innerHTML = '';
+    document.getElementById('errorReg').innerHTML = '';
+
+    const data_compra = document.getElementById('data_compra').value; // YYYY-MM-DD
+    const celular = document.getElementById('reg_celular').value.trim();
+    const nome = document.getElementById('reg_nome').value.trim();
+    const produto = document.getElementById('produto').value.trim();
+    const quantidade = parseFloat(document.getElementById('quantidade').value) || 0;
+    const valor_unitario = parseFloat(document.getElementById('valor_unitario').value) || 0;
+    const status_pagamento = document.getElementById('status_pagamento').value;
+    const comprovante_url = document.getElementById('comprovante_url').value.trim();
+    const observacao = document.getElementById('observacao').value.trim();
+
+    if (!celular || !nome || !produto || quantidade <= 0 || valor_unitario <= 0) {
+        document.getElementById('errorReg').innerHTML = 'Preencha os campos obrigatórios corretamente.';
+        return;
+    }
+
+    const payload = {
+        data_compra: data_compra, // Apps Script aceitará essa data
+        celular: celular,
+        nome: nome,
+        produto: produto,
+        quantidade: quantidade,
+        valor_unitario: valor_unitario,
+        status_pagamento: status_pagamento,
+        comprovante_url: comprovante_url,
+        observacao: observacao
+    };
+
+    document.getElementById('resultReg').innerHTML = 'Enviando...';
+    try {
+        const resp = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await resp.json();
+        if (data.ok) {
+            document.getElementById('resultReg').innerHTML = data.mensagem || 'Registro salvo com sucesso.';
+            // limpar formulário mínimo
+            document.getElementById('produto').value = '';
+            document.getElementById('quantidade').value = '1';
+            document.getElementById('valor_unitario').value = '';
+        } else if (data.erro) {
+            document.getElementById('errorReg').innerHTML = data.erro;
+            document.getElementById('resultReg').innerHTML = '';
+        }
+    } catch (err) {
+        document.getElementById('errorReg').innerHTML = 'Erro ao enviar registro, tente novamente.';
+        document.getElementById('resultReg').innerHTML = '';
     }
 }
